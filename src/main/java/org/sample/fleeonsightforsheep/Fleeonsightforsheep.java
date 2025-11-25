@@ -49,14 +49,18 @@ public class Fleeonsightforsheep implements ModInitializer { public static final
     }
 
     private void fleeSheepFromPlayer(SheepEntity sheep, PlayerEntity player) {
+        double sheepyaw = sheep.getHeadYaw();
         Vec3d animalPos = sheep.getPos();
         Vec3d playerPos = player.getPos();
+        Vec3d vec = playerPos.subtract(animalPos); // vector from sheep to player
+        Vec3d facing = Vec3d.fromPolar(0, (float) sheepyaw);
+        boolean sightcheck = (2*(vec.normalize().dotProduct(facing.normalize())) > 1);//shit
 
         double dx = animalPos.x - playerPos.x;
         double dz = animalPos.z - playerPos.z;
         double distance = Math.sqrt(dx * dx + dz * dz);
 
-        if (distance > 0 && distance < DETECTION_RANGE) {
+        if (distance > 0 && distance < DETECTION_RANGE && sightcheck) {
             sheep.setAttacker(player);
 
         }
@@ -64,5 +68,4 @@ public class Fleeonsightforsheep implements ModInitializer { public static final
 
 
 }
-
 

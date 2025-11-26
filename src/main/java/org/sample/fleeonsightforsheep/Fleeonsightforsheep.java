@@ -5,13 +5,19 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
+
 import java.util.List;
 import java.util.WeakHashMap;
 
+/*TODO：
+       1.引入sneak机制
+       2.引入概率触发机制
+ */
 public class Fleeonsightforsheep implements ModInitializer {
     public static final String MOD_ID = "Animalflee";
     private static final double DETECTION_RANGE = 6.0;
@@ -19,6 +25,7 @@ public class Fleeonsightforsheep implements ModInitializer {
     private static final double FLEE_SPEED = 0.25;
     private static final int ANGLE = 120;// represent whole FOV
     private final WeakHashMap<SheepEntity, Boolean> fleeing = new WeakHashMap<>();
+    private final WeakHashMap<SheepEntity, Boolean> friendlySheep = new WeakHashMap<>();
 
     @Override
     public void onInitialize() {
@@ -34,8 +41,12 @@ public class Fleeonsightforsheep implements ModInitializer {
                     LivingEntity::isAlive
             );
             for (SheepEntity sheep : group) {
-                fleeSheepFromPlayer(sheep, player);
+                sheep_state_check(sheep, player);
+                if (!friendlySheep.getOrDefault(sheep, false)) {
+                    fleeSheepFromPlayer(sheep, player);
+                }
             }
+
         }
     }
 
@@ -48,6 +59,7 @@ public class Fleeonsightforsheep implements ModInitializer {
         double dz = animalPos.z - playerPos.z;
         double distance = Math.sqrt(dx * dx + dz * dz);
 
+        //player-oriented monitor for each sheep
         // 我去状态机太tm优雅了
         if (!isfleeing && distance <= DETECTION_RANGE && anglecheck(sheep, player)) {
             isfleeing = true;// so the third "if" is in the same tick
@@ -59,7 +71,7 @@ public class Fleeonsightforsheep implements ModInitializer {
             sheep.setAttacker(player);//stop fleeing and then panic wander
             return;
         }
-
+        // 执行
         if (isfleeing) {
             flee_logic(sheep, player);
         }
@@ -89,4 +101,20 @@ public class Fleeonsightforsheep implements ModInitializer {
         double dot = facing.dotProduct(vec);
         return dot > Math.cos(Math.toRadians(ANGLE * 0.5));// ANGLE is the whole FOV
     }
+
+    public boolean filter(PlayerEntity player) {
+        return !player.isHolding(Items.WHEAT);
+    }
+
+    //sheep 的 friendly 状态机
+    public void sheep_state_check(SheepEntity sheep, PlayerEntity player) {
+        boolean is_friendly = friendlySheep.getOrDefault(sheep, false);
+        friendlySheep.putIfAbsent(sheep, false);
+        if (!is_friendly && anglecheck(sheep, player) && player.isHolding(Items.WHEAT) && (sheep.distanceTo(player) < 8)) {
+            is_friendly = true;
+            friendlySheep.put(sheep, true);
+        }
+    }
 }
+
+

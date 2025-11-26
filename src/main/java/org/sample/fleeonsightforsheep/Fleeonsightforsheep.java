@@ -9,16 +9,13 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
-
-import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 import java.util.WeakHashMap;
 
 public class Fleeonsightforsheep implements ModInitializer {
     public static final String MOD_ID = "Animalflee";
     private static final double DETECTION_RANGE = 6.0;
-    private static final double STOP_RANGE = 19.0;
+    private static final double STOP_RANGE = 22.0;
     private static final double FLEE_SPEED = 0.25;
     private static final int ANGLE = 120;// represent whole FOV
     private final WeakHashMap<SheepEntity, Boolean> fleeing = new WeakHashMap<>();
@@ -30,15 +27,12 @@ public class Fleeonsightforsheep implements ModInitializer {
     }
 
     private void onWorldTick(ServerWorld world) {
-
         List<ServerPlayerEntity> players = world.getPlayers();
-
         for (PlayerEntity player : players) {
             List<SheepEntity> group = player.getWorld().getEntitiesByClass(
-                    SheepEntity.class, player.getBoundingBox().expand(25.0),
+                    SheepEntity.class, player.getBoundingBox().expand(27.0),
                     LivingEntity::isAlive
             );
-
             for (SheepEntity sheep : group) {
                 fleeSheepFromPlayer(sheep, player);
             }
@@ -47,12 +41,9 @@ public class Fleeonsightforsheep implements ModInitializer {
 
     //check whether launch flee_logic or not
     private void fleeSheepFromPlayer(SheepEntity sheep, PlayerEntity player) {
-
         boolean isfleeing = fleeing.getOrDefault(sheep, false);
-
         Vec3d animalPos = sheep.getPos();
         Vec3d playerPos = player.getPos();
-
         double dx = animalPos.x - playerPos.x;
         double dz = animalPos.z - playerPos.z;
         double distance = Math.sqrt(dx * dx + dz * dz);
@@ -65,8 +56,8 @@ public class Fleeonsightforsheep implements ModInitializer {
         if (isfleeing && distance >= STOP_RANGE) {
             isfleeing = false;
             fleeing.put(sheep, false);
-
-
+            sheep.setAttacker(player);//stop fleeing and then panic wander
+            return;
         }
 
         if (isfleeing) {
@@ -74,6 +65,7 @@ public class Fleeonsightforsheep implements ModInitializer {
         }
     }
 
+    // the logic of flee
     public void flee_logic(SheepEntity sheep, PlayerEntity player) {
         Vec3d sheepPos = sheep.getPos();
         Vec3d playerPos = player.getPos();

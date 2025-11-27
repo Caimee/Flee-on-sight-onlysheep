@@ -9,7 +9,7 @@ import net.minecraft.util.math.Vec3d;
 public class SheepFleeAIManager {
     private static final double DETECTION_RANGE = 6.0;
     private static final double STOP_RANGE = 22.0;
-    private static final double FLEE_SPEED = 0.25;
+    private static final double FLEE_SPEED = 2.1;
     private static final int ANGLE = 120;// represent whole FOV
 
     //sheep 的 fleeing 状态机
@@ -35,26 +35,27 @@ public class SheepFleeAIManager {
 
     public static boolean FOVcheck(SheepEntity sheep, PlayerEntity player) {
         Vec3d vec = player.getPos().subtract(sheep.getPos()).normalize();// vector from sheep to player
-        Vec3d facing = Vec3d.fromPolar(0, (float) sheep.getHeadYaw()).normalize();// vector sheep's head
+        Vec3d facing = Vec3d.fromPolar(0, sheep.getHeadYaw()).normalize();// vector sheep's head
         double dot = facing.dotProduct(vec);
         return dot > Math.cos(Math.toRadians(ANGLE * 0.5));// ANGLE is the whole FOV
     }
 
     // the logic of flee
     public static void applyFlee_logic(SheepEntity sheep, PlayerEntity player) {
-        Vec3d sheepPos = sheep.getPos();
-        Vec3d playerPos = player.getPos();
-        double dx = sheepPos.x - playerPos.x;
-        double dz = sheepPos.z - playerPos.z;
-        double distance = Math.sqrt(dx * dx + dz * dz);
-        // they flee straight !
-        double normalizedX = (dx / distance) * FLEE_SPEED;
-        double normalizedZ = (dz / distance) * FLEE_SPEED;
-        sheep.setVelocity(normalizedX, sheep.getVelocity().y, normalizedZ);
-        sheep.velocityModified = true;
-        float yaw = (float) (Math.atan2(normalizedZ, normalizedX) * 180.0 / Math.PI) - 90.0F;
-        sheep.setYaw(yaw);
-        sheep.setBodyYaw(yaw);
-        sheep.setHeadYaw(yaw);
+        Vec3d fromPlayer = sheep.getPos().subtract(player.getPos()).normalize();
+
+        // 逃跑方向（反方向）
+        Vec3d fleeDir = fromPlayer.multiply(22.0); // 逃跑 12 格距离
+
+        // 逃跑目标点
+        Vec3d targetPos = sheep.getPos().add(fleeDir);
+
+        // 使用导航去逃跑
+        sheep.getNavigation().startMovingTo(
+                targetPos.x,
+                targetPos.y,
+                targetPos.z,
+                FLEE_SPEED
+        );
     }
 }

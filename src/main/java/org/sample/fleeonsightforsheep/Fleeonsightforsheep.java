@@ -2,6 +2,7 @@ package org.sample.fleeonsightforsheep;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -35,18 +36,17 @@ public class Fleeonsightforsheep implements ModInitializer {
 
     private void onWorldTick(ServerWorld world) {
         List<ServerPlayerEntity> players = world.getPlayers();
-        for (PlayerEntity player : players) {
-            List<SheepEntity> group = player.getWorld().getEntitiesByClass(
-                    SheepEntity.class, player.getBoundingBox().expand(27.0),
-                    LivingEntity::isAlive
-            );
-            for (SheepEntity sheep : group) {
-                sheep_state_check(sheep, player);
-                if (!friendlySheep.getOrDefault(sheep, false)) {
-                    fleeSheepFromPlayer(sheep, player);
-                }
-            }
 
+        var group =  world.getEntitiesByType(EntityType.SHEEP, e -> true);
+        for (SheepEntity sheep : group) {
+            PlayerEntity player = world.getClosestPlayer(sheep, 32.0);
+            if (player == null) {
+                continue;
+            }
+            sheep_state_check(sheep, player);
+            if (!friendlySheep.getOrDefault(sheep, false)) {
+                fleeSheepFromPlayer(sheep, player);
+            }
         }
     }
 
@@ -59,7 +59,7 @@ public class Fleeonsightforsheep implements ModInitializer {
         double dz = animalPos.z - playerPos.z;
         double distance = Math.sqrt(dx * dx + dz * dz);
 
-        //player-oriented monitor for each sheep
+
         // 我去状态机太tm优雅了
         if (!isfleeing && distance <= DETECTION_RANGE && anglecheck(sheep, player)) {
             isfleeing = true;// so the third "if" is in the same tick

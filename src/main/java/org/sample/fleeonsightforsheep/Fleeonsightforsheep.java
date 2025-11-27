@@ -25,60 +25,66 @@ public class Fleeonsightforsheep implements ModInitializer {
     private static final double STOP_RANGE = 22.0;
     private static final double FLEE_SPEED = 0.25;
     private static final int ANGLE = 120;// represent whole FOV
-    private final WeakHashMap<SheepEntity, Boolean> fleeing = new WeakHashMap<>();
-    private final WeakHashMap<SheepEntity, Boolean> friendlySheep = new WeakHashMap<>();
+    WeakHashMap<SheepEntity, SheepAIState> sheepStates = new WeakHashMap<>();
 
     @Override
     public void onInitialize() {
         ServerTickEvents.END_WORLD_TICK.register(this::onWorldTick);
-        System.out.println("Animal Flee Mod initialized!");
+        System.out.println("FleeOnSight Mod initialized!");
     }
 
     private void onWorldTick(ServerWorld world) {
-        List<ServerPlayerEntity> players = world.getPlayers();
-
-        var group =  world.getEntitiesByType(EntityType.SHEEP, e -> true);
+        var group = getAllLoadedSheep(world);
         for (SheepEntity sheep : group) {
-            PlayerEntity player = world.getClosestPlayer(sheep, 32.0);
+            PlayerEntity player = getNearbyplayer(world, sheep);
             if (player == null) {
                 continue;
             }
-            sheep_state_check(sheep, player);
-            if (!friendlySheep.getOrDefault(sheep, false)) {
-                fleeSheepFromPlayer(sheep, player);
+            SheepAIState state = getState(sheep);
+            SheepFleeAIManager.updateFriendlyState(sheep, player, state);
+            SheepFleeAIManager.updateFleeingState(sheep, player, state);
+            if (!state.isFriendly && state.isFleeing) {
+                SheepFleeAIManager.applyFlee_logic(sheep, player);//执行逃跑
             }
         }
     }
 
-    //check whether launch flee_logic or not
-    private void fleeSheepFromPlayer(SheepEntity sheep, PlayerEntity player) {
-        boolean isfleeing = fleeing.getOrDefault(sheep, false);
-        Vec3d animalPos = sheep.getPos();
-        Vec3d playerPos = player.getPos();
-        double dx = animalPos.x - playerPos.x;
-        double dz = animalPos.z - playerPos.z;
-        double distance = Math.sqrt(dx * dx + dz * dz);
+    private SheepAIState getState(SheepEntity sheep) {
+        return sheepStates.computeIfAbsent(sheep, s -> new SheepAIState());
+    }
 
+    //sheep的flee状态机
+    private void updateFleeingState(SheepEntity sheep, PlayerEntity player, SheepAIState state) {
+        double distance = sheep.distanceTo(player);
 
         // 我去状态机太tm优雅了
-        if (!isfleeing && distance <= DETECTION_RANGE && anglecheck(sheep, player)) {
-            isfleeing = true;// so the third "if" is in the same tick
-            fleeing.put(sheep, true);
+        if (!state.isFleeing && distance <= DETECTION_RANGE && FOVcheck(sheep, player)) {
+            state.isFleeing = true;
         }
-        if (isfleeing && distance >= STOP_RANGE) {
-            isfleeing = false;
-            fleeing.put(sheep, false);
+        if (state.isFleeing && distance >= STOP_RANGE) {
+            state.isFleeing = false;
             sheep.setAttacker(player);//stop fleeing and then panic wander
-            return;
-        }
-        // 执行
-        if (isfleeing) {
-            flee_logic(sheep, player);
         }
     }
 
+    //sheep 的 friendly 状态机
+    public void updateFriendlyState(SheepEntity sheep, PlayerEntity player, SheepAIState state) {
+
+        if (!state.isFriendly && FOVcheck(sheep, player) && player.isHolding(Items.WHEAT) && (sheep.distanceTo(player) < 8)) {
+            state.isFriendly = true;
+        }
+    }
+
+    private List<? extends SheepEntity> getAllLoadedSheep(ServerWorld world) {
+        return world.getEntitiesByType(EntityType.SHEEP, e -> true);
+    }
+
+    private PlayerEntity getNearbyplayer(ServerWorld world, SheepEntity sheep) {
+        return world.getClosestPlayer(sheep, 32.0);
+    }
+
     // the logic of flee
-    public void flee_logic(SheepEntity sheep, PlayerEntity player) {
+    public void applyFlee_logic(SheepEntity sheep, PlayerEntity player) {
         Vec3d sheepPos = sheep.getPos();
         Vec3d playerPos = player.getPos();
         double dx = sheepPos.x - playerPos.x;
@@ -95,25 +101,11 @@ public class Fleeonsightforsheep implements ModInitializer {
         sheep.setHeadYaw(yaw);
     }
 
-    public boolean anglecheck(SheepEntity sheep, PlayerEntity player) {
+    public boolean FOVcheck(SheepEntity sheep, PlayerEntity player) {
         Vec3d vec = player.getPos().subtract(sheep.getPos()).normalize();// vector from sheep to player
         Vec3d facing = Vec3d.fromPolar(0, (float) sheep.getHeadYaw()).normalize();// vector sheep's head
         double dot = facing.dotProduct(vec);
         return dot > Math.cos(Math.toRadians(ANGLE * 0.5));// ANGLE is the whole FOV
-    }
-
-    public boolean filter(PlayerEntity player) {
-        return !player.isHolding(Items.WHEAT);
-    }
-
-    //sheep 的 friendly 状态机
-    public void sheep_state_check(SheepEntity sheep, PlayerEntity player) {
-        boolean is_friendly = friendlySheep.getOrDefault(sheep, false);
-        friendlySheep.putIfAbsent(sheep, false);
-        if (!is_friendly && anglecheck(sheep, player) && player.isHolding(Items.WHEAT) && (sheep.distanceTo(player) < 8)) {
-            is_friendly = true;
-            friendlySheep.put(sheep, true);
-        }
     }
 }
 

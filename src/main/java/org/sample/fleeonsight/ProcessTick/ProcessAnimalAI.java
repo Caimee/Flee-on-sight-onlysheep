@@ -1,26 +1,22 @@
-package org.sample.fleeonsight;
+package org.sample.fleeonsight.ProcessTick;
 
 import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.passive.PigEntity;
 import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import org.sample.fleeonsight.AnimalStateSystem.AnimalGroupFleeManager;
-import org.sample.fleeonsight.AnimalStateSystem.AnimalStateManager.CowStateAIManager;
-import org.sample.fleeonsight.AnimalStateSystem.AnimalStateManager.PigStateAIManager;
-import org.sample.fleeonsight.AnimalStateSystem.AnimalStateManager.SheepStateAIManager;
-import org.sample.fleeonsight.AnimalStateSystem.Animalstate.MobState;
+import org.sample.fleeonsight.AnimalSystem.AnimalGroupManager.AnimalGroupFleeManager;
+import org.sample.fleeonsight.AnimalSystem.Animalstate.MobState;
 import org.sample.fleeonsight.PlayerSystem.PlayerState;
-import org.sample.fleeonsight.PlayerSystem.PlayerStateManager;
+import org.sample.fleeonsight.PlayerSystem.PlayerStateMachine;
 
 import java.util.List;
 
 import static org.sample.fleeonsight.EntityUtils.*;
+import static org.sample.fleeonsight.ProcessTick.ProcessAnimalAISupport.*;
 
 public class ProcessAnimalAI {
-    static SheepStateAIManager SheepAI = new SheepStateAIManager();
-    static PigStateAIManager PigAI = new PigStateAIManager();
-    static CowStateAIManager CowAI = new CowStateAIManager();
+
 
     public static void processSheepAI(ServerWorld world, List<? extends SheepEntity> sheepGroup) {
         for (SheepEntity sheep : sheepGroup) {
@@ -29,8 +25,8 @@ public class ProcessAnimalAI {
                 continue;
             }
             PlayerState playerState = getPlayerState(player);
-            PlayerStateManager.updateSneakingState(player, playerState);
-            PlayerStateManager.playerStateExecute(player, playerState);
+            PlayerStateMachine.updateSneakingState(player, playerState);
+            PlayerStateMachine.playerStateExecute(player, playerState);
             MobState sheepState = getMobState(sheep);
             SheepAI.updateFriendlyState(sheep, player, sheepState);
             SheepAI.updateFleeingState(sheep, player, sheepState, playerState);
@@ -48,8 +44,8 @@ public class ProcessAnimalAI {
                 continue;
             }
             PlayerState playerState = getPlayerState(player);
-            PlayerStateManager.updateSneakingState(player, playerState);
-            PlayerStateManager.playerStateExecute(player, playerState);
+            PlayerStateMachine.updateSneakingState(player, playerState);
+            PlayerStateMachine.playerStateExecute(player, playerState);
             MobState pigState = getMobState(pig);
             PigAI.updateFriendlyState(pig, player, pigState);
             PigAI.updateFleeingState(pig, player, pigState, playerState);
@@ -67,8 +63,8 @@ public class ProcessAnimalAI {
                 continue;
             }
             PlayerState playerState = getPlayerState(player);
-            PlayerStateManager.updateSneakingState(player, playerState);
-            PlayerStateManager.playerStateExecute(player, playerState);
+            PlayerStateMachine.updateSneakingState(player, playerState);
+            PlayerStateMachine.playerStateExecute(player, playerState);
             MobState cowState = getMobState(cow);
             CowAI.updateFriendlyState(cow, player, cowState);
             CowAI.updateFleeingState(cow, player, cowState, playerState);

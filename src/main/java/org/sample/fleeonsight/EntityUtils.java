@@ -7,7 +7,7 @@ import net.minecraft.entity.passive.PigEntity;
 import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import org.sample.fleeonsight.AnimalStateSystem.Animalstate.MobState;
+import org.sample.fleeonsight.AnimalSystem.Animalstate.MobState;
 import org.sample.fleeonsight.PlayerSystem.PlayerState;
 
 import java.util.List;

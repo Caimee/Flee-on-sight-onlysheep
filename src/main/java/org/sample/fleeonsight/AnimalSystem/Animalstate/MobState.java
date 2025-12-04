@@ -1,4 +1,4 @@
-package org.sample.fleeonsight.AnimalStateSystem.Animalstate;
+package org.sample.fleeonsight.AnimalSystem.Animalstate;
 
 public class MobState {
     public boolean isFleeing = false;

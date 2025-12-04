@@ -1,11 +1,11 @@
 package org.sample.fleeonsight.PlayerSystem;
 
 import net.minecraft.entity.player.PlayerEntity;
-import org.sample.fleeonsight.LogicAttributes;
+import org.sample.fleeonsight.LogicConfig;
 
-import static org.sample.fleeonsight.LogicAttributes.SNEAK_RANGE;
+import static org.sample.fleeonsight.LogicConfig.SNEAK_RANGE;
 
-public class PlayerStateManager {
+public class PlayerStateMachine {
 
     // logic of sneaking state machine
     public static void updateSneakingState(PlayerEntity player, PlayerState state) {
@@ -22,7 +22,7 @@ public class PlayerStateManager {
             state.detectionRange = SNEAK_RANGE;
         }
         if (!state.isSneaking) {
-            state.detectionRange = LogicAttributes.DEFAULT_DETECTION_RANGE;
+            state.detectionRange = LogicConfig.DEFAULT_DETECTION_RANGE;
         }
     }
 }

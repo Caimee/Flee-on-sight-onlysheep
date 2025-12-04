@@ -1,6 +1,6 @@
 package org.sample.fleeonsight.PlayerSystem;
 
-import static org.sample.fleeonsight.LogicAttributes.DEFAULT_DETECTION_RANGE;
+import static org.sample.fleeonsight.LogicConfig.DEFAULT_DETECTION_RANGE;
 
 public class PlayerState {
     public boolean isSneaking = false;

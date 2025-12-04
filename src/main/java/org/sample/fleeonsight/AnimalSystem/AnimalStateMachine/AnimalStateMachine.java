@@ -1,4 +1,4 @@
-package org.sample.fleeonsight.AnimalStateSystem.AnimalStateManager;
+package org.sample.fleeonsight.AnimalSystem.AnimalStateMachine;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
@@ -6,11 +6,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.Vec3d;
 import org.sample.fleeonsight.PlayerSystem.PlayerState;
-import org.sample.fleeonsight.AnimalStateSystem.Animalstate.MobState;
+import org.sample.fleeonsight.AnimalSystem.Animalstate.MobState;
 
-import static org.sample.fleeonsight.LogicAttributes.*;
+import static org.sample.fleeonsight.LogicConfig.*;
 
-public interface AnimalStateAIManager {
+public interface AnimalStateMachine {
 
     //logic of fleeing state machine
     default void updateFleeingState(LivingEntity animal, PlayerEntity player, MobState MobState, PlayerState playerState) {

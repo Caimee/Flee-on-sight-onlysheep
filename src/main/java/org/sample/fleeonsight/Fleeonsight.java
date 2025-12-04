@@ -6,9 +6,6 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import org.sample.fleeonsight.AnimalSystem.AnimalStateMachine.CowStateMachine;
-import org.sample.fleeonsight.AnimalSystem.AnimalStateMachine.PigStateMachine;
-import org.sample.fleeonsight.AnimalSystem.AnimalStateMachine.SheepStateMachine;
 import org.sample.fleeonsight.AnimalSystem.Animalstate.MobState;
 import org.sample.fleeonsight.PlayerSystem.PlayerState;
 
@@ -19,11 +16,8 @@ import static org.sample.fleeonsight.ProcessTick.ProcessAnimalAI.*;
 
 public class Fleeonsight implements ModInitializer {
     public static final String MOD_ID = "FleeOnSight";
-    public static WeakHashMap<MobEntity, MobState> MobStates = new WeakHashMap<>();
-    public static WeakHashMap<PlayerEntity, PlayerState> playerStates = new WeakHashMap<>();
-    SheepStateMachine SheepAI = new SheepStateMachine();
-    PigStateMachine PigAI = new PigStateMachine();
-    CowStateMachine CowAI = new CowStateMachine();
+    public static WeakHashMap<MobEntity, MobState> MobStates = new WeakHashMap<>();// Store mob states with weak references
+    public static WeakHashMap<PlayerEntity, PlayerState> playerStates = new WeakHashMap<>();// Store player states with weak references
 
     @Override
     public void onInitialize() {
@@ -32,6 +26,8 @@ public class Fleeonsight implements ModInitializer {
     }
 
     private void onWorldTick(ServerWorld world) {
+
+        // Process animal AI each tick
         var sheepGroup = getAllLoadedSheep(world);
         var pigGroup = getAllLoadedPig(world);
         var cowGroup = getAllLoadedCow(world);
@@ -39,8 +35,6 @@ public class Fleeonsight implements ModInitializer {
         processCowAI(world, cowGroup);
         processPigAI(world, pigGroup);
     }
-
-
 }
 
 

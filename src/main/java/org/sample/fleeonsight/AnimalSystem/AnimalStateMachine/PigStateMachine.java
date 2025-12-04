@@ -8,6 +8,7 @@ import org.sample.fleeonsight.AnimalSystem.Animalstate.MobState;
 
 import static org.sample.fleeonsight.LogicConfig.FLEE_SPEED;
 
+// State machine for pig
 public class PigStateMachine implements AnimalStateMachine {
 
     @Override

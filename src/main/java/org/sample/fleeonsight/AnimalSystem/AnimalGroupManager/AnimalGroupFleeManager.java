@@ -12,10 +12,7 @@ import java.util.function.Predicate;
 import static org.sample.fleeonsight.EntityUtils.getMobState;
 
 /**
- * Generic manager that spreads the fleeing state among herd animals.
- * <p>
- * When one animal starts fleeing, other animals of the same type within
- * a defined radius will  begin fleeing, simulating herd panic response.
+  *Generic manager that spreads the fleeing state among herd animals.
  */
 public class AnimalGroupFleeManager {
 
@@ -36,7 +33,7 @@ public class AnimalGroupFleeManager {
                 Predicate.not(a -> a == animal)
         );
 
-        // Set fleeing state to each animal that is not yet fleeing
+        // Set fleeing state to each nearby animal that is not fleeing
         for (T other : nearby) {
             var state = getMobState(other);
             if (!state.isFleeing) {
@@ -45,7 +42,7 @@ public class AnimalGroupFleeManager {
         }
     }
 
-
+// wrappers for specific animal types
     public static void manageSheepGroupFlee(SheepEntity sheep) {
         manageGroupFlee(sheep, EntityType.SHEEP);
     }

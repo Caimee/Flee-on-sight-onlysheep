@@ -1,6 +1,7 @@
 package org.sample.fleeonsight;
 
 public class LogicConfig {
+    // logic parameters
     public static final double GROUP_FLEE_RADIUS = 13.8;
     public static final double STOP_RANGE = 28.0;
     public static final double FLEE_SPEED = 2.0;

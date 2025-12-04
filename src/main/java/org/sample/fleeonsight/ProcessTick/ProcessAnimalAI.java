@@ -26,7 +26,7 @@ public class ProcessAnimalAI {
             }
             PlayerState playerState = getPlayerState(player);
             PlayerStateMachine.updateSneakingState(player, playerState);
-            PlayerStateMachine.playerStateExecute(player, playerState);
+            PlayerStateMachine.playerStateExecute(playerState);
             MobState sheepState = getMobState(sheep);
             SheepAI.updateFriendlyState(sheep, player, sheepState);
             SheepAI.updateFleeingState(sheep, player, sheepState, playerState);
@@ -45,7 +45,7 @@ public class ProcessAnimalAI {
             }
             PlayerState playerState = getPlayerState(player);
             PlayerStateMachine.updateSneakingState(player, playerState);
-            PlayerStateMachine.playerStateExecute(player, playerState);
+            PlayerStateMachine.playerStateExecute(playerState);
             MobState pigState = getMobState(pig);
             PigAI.updateFriendlyState(pig, player, pigState);
             PigAI.updateFleeingState(pig, player, pigState, playerState);
@@ -64,7 +64,7 @@ public class ProcessAnimalAI {
             }
             PlayerState playerState = getPlayerState(player);
             PlayerStateMachine.updateSneakingState(player, playerState);
-            PlayerStateMachine.playerStateExecute(player, playerState);
+            PlayerStateMachine.playerStateExecute(playerState);
             MobState cowState = getMobState(cow);
             CowAI.updateFriendlyState(cow, player, cowState);
             CowAI.updateFleeingState(cow, player, cowState, playerState);

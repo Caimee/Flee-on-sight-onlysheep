@@ -4,6 +4,7 @@ import org.sample.fleeonsight.AnimalSystem.AnimalStateMachine.CowStateMachine;
 import org.sample.fleeonsight.AnimalSystem.AnimalStateMachine.PigStateMachine;
 import org.sample.fleeonsight.AnimalSystem.AnimalStateMachine.SheepStateMachine;
 
+// Provides access to different animal AI state machines
 public class ProcessAnimalAISupport {
     public final static SheepStateMachine SheepAI = new SheepStateMachine();
     public final static PigStateMachine PigAI = new PigStateMachine();

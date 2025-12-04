@@ -10,15 +10,19 @@ import org.sample.fleeonsight.AnimalSystem.Animalstate.MobState;
 
 import static org.sample.fleeonsight.LogicConfig.*;
 
+// Interface defining the state machine behavior for animals
 public interface AnimalStateMachine {
 
     //logic of fleeing state machine
     default void updateFleeingState(LivingEntity animal, PlayerEntity player, MobState MobState, PlayerState playerState) {
         double distance = animal.distanceTo(player);
 
+        // Enter fleeing state
         if (!MobState.isFleeing && distance <= playerState.detectionRange && FOVcheck(animal, player)) {
             MobState.isFleeing = true;
         }
+
+        // Exit fleeing state
         if (MobState.isFleeing && distance >= STOP_RANGE) {
             MobState.isFleeing = false;
             animal.setAttacker(player);//stop fleeing and then panic wander
@@ -27,26 +31,33 @@ public interface AnimalStateMachine {
 
     //logic of friendly state machine
     default void updateFriendlyState(LivingEntity animal, PlayerEntity player, MobState state) {
+
+        // Enter friendly state
         if (!state.isFriendly && FOVcheck(animal, player) && player.isHolding(Items.WHEAT) && (animal.distanceTo(player) < 8)) {
             state.isFriendly = true;//entry friendly state
         }
+
+        // Exit friendly state
         if (state.isFriendly && animal.getAttacker() == player) {
-            state.isFriendly = false;//exit friendly state
+            state.isFriendly = false;
         }
     }
 
     default boolean FOVcheck(LivingEntity animal, PlayerEntity player) {
         Vec3d vec = player.getPos().subtract(animal.getPos()).normalize();// vector from animal to player
         Vec3d facing = Vec3d.fromPolar(0, animal.getHeadYaw()).normalize();// vector animal's head
+
+        // calculate and compare the dot product
         double dot = facing.dotProduct(vec);
-        return dot > Math.cos(Math.toRadians(ANGLE * 0.5));// ANGLE is the whole FOV
+        return dot > Math.cos(Math.toRadians(ANGLE * 0.5));// ANGLE is the whole FOV !
     }
 
     //logic of flee
     default void applyFlee_logic(MobEntity animal, PlayerEntity player) {
-        Vec3d fromPlayer = animal.getPos().subtract(player.getPos()).normalize();
-        Vec3d fleeDir = fromPlayer.multiply(26.5);
-        Vec3d targetPos = animal.getPos().add(fleeDir);
+        Vec3d fromPlayer = animal.getPos().subtract(player.getPos()).normalize();// vector from player to animal
+        Vec3d fleeDir = fromPlayer.multiply(26.5);// flee distance
+        Vec3d targetPos = animal.getPos().add(fleeDir);// target position
+        // initiate movement towards the target position at flee speed
         animal.getNavigation().startMovingTo(
                 targetPos.x,
                 targetPos.y,

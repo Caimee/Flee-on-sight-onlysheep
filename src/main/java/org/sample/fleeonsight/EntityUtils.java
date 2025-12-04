@@ -15,11 +15,8 @@ import java.util.List;
 import static org.sample.fleeonsight.Fleeonsight.MobStates;
 import static org.sample.fleeonsight.Fleeonsight.playerStates;
 
+// Utility class for entity-related operations
 public class EntityUtils {
-
-    public static MobState getMobState(MobEntity mob) {
-        return MobStates.computeIfAbsent(mob, s -> new MobState());
-    }
 
     public static List<? extends SheepEntity> getAllLoadedSheep(ServerWorld world) {
         return world.getEntitiesByType(EntityType.SHEEP, e -> true);
@@ -37,7 +34,13 @@ public class EntityUtils {
         return world.getClosestPlayer(mob, 42.0);
     }
 
+    // Retrieve or create the PlayerState for a given player
     public static PlayerState getPlayerState(PlayerEntity player) {
         return playerStates.computeIfAbsent(player, p -> new PlayerState());
+    }
+
+    // Retrieve or create the MobState for a given mob
+    public static MobState getMobState(MobEntity mob) {
+        return MobStates.computeIfAbsent(mob, s -> new MobState());
     }
 }

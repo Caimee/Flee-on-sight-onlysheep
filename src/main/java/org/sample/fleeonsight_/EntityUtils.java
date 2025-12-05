@@ -7,7 +7,7 @@ import net.minecraft.entity.passive.PigEntity;
 import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import org.sample.fleeonsight_.AnimalStateSystem.Animalstate.MobState;
+import org.sample.fleeonsight_.AnimalSystem.Animalstate.MobState;
 import org.sample.fleeonsight_.PlayerSystem.PlayerState;
 
 import java.util.List;
@@ -15,11 +15,8 @@ import java.util.List;
 import static org.sample.fleeonsight_.Fleeonsight_.MobStates;
 import static org.sample.fleeonsight_.Fleeonsight_.playerStates;
 
+// Utility class for entity-related operations
 public class EntityUtils {
-
-    public static MobState getMobState(MobEntity mob) {
-        return MobStates.computeIfAbsent(mob, s -> new MobState());
-    }
 
     public static List<? extends SheepEntity> getAllLoadedSheep(ServerWorld world) {
         return world.getEntitiesByType(EntityType.SHEEP, e -> true);
@@ -34,10 +31,16 @@ public class EntityUtils {
     }
 
     public static PlayerEntity getNearbyPlayer(ServerWorld world, MobEntity mob) {
-        return world.getClosestPlayer(mob, 42.0);
+        return world.getClosestPlayer(mob, 42.6);
     }
 
+    // Retrieve or create the PlayerState for a given player
     public static PlayerState getPlayerState(PlayerEntity player) {
         return playerStates.computeIfAbsent(player, p -> new PlayerState());
+    }
+
+    // Retrieve or create the MobState for a given mob
+    public static MobState getMobState(MobEntity mob) {
+        return MobStates.computeIfAbsent(mob, s -> new MobState());
     }
 }

@@ -1,14 +1,15 @@
-package org.sample.fleeonsight_.AnimalStateSystem.AnimalStateManager;
+package org.sample.fleeonsight_.AnimalSystem.AnimalStateMachine;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.Vec3d;
-import org.sample.fleeonsight_.AnimalStateSystem.Animalstate.MobState;
+import org.sample.fleeonsight_.AnimalSystem.Animalstate.MobState;
 
-import static org.sample.fleeonsight_.LogicAttributes.FLEE_SPEED;
+import static org.sample.fleeonsight_.LogicConfig.FLEE_SPEED;
 
-public class PigStateAIManager implements AnimalStateAIManager {
+// State machine for pig
+public class PigStateMachine implements AnimalStateMachine {
 
     @Override
     public void updateFriendlyState(LivingEntity pig, PlayerEntity player, MobState state) {

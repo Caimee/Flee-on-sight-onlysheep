@@ -42,7 +42,7 @@ public class ProcessAnimalAI {
 
             // Find the nearest player
             PlayerEntity player = getNearbyPlayer(world, animal);
-            if (player == null) {
+            if (player == null || player.isCreative()) {
                 continue;
             }
 

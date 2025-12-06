@@ -35,7 +35,6 @@ public class AnimalGroupFleeManager {
             state.timer++;
             return;
         }
-        //Todo: begin a initial timer once detect isFleeing = true
 
         var world = animal.getWorld();
 

@@ -55,9 +55,10 @@ public class ProcessAnimalAI {
             PlayerStateMachine.playerStateExecute(playerState);
 
             // Update animal states based on player state
+            aiHandler.updatePlayerDetectedState(animal, player, animalState, playerState);
             aiHandler.updateFriendlyState(animal, player, animalState);
-            aiHandler.updateFleeingState(animal, player, animalState, playerState);
-
+            aiHandler.updateFleeingState(animal, player, animalState);
+            aiHandler.updateGroupStartledState(animal, animalState);
             // Manage group fleeing behavior
             AnimalGroupFleeManager.manageGroupFlee(animal);
 

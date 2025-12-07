@@ -4,6 +4,8 @@ package org.sample.fleeonsight.AnimalSystem.Animalstate;
 public class MobState {
     public boolean isFleeing = false;
     public boolean isFriendly = false;
+    public boolean isPlayerDetected = false;
+    public boolean isGroupStartled = false;
     public int timer = 0;
 }
 

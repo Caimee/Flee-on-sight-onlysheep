@@ -49,7 +49,8 @@ public class AnimalGroupFleeManager {
         for (Entity other : nearby) {
             var otherState = getMobState((MobEntity) other);
             if (!otherState.isFleeing) {
-                otherState.isFleeing = true;
+                otherState.isGroupStartled = true;
+                otherState.isPlayerDetected = true;
             }
         }
         state.timer = 0;

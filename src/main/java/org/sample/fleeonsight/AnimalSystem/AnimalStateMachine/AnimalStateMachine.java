@@ -14,18 +14,38 @@ import static org.sample.fleeonsight.LogicConfig.*;
 public interface AnimalStateMachine {
 
     //logic of fleeing state machine
-    default void updateFleeingState(LivingEntity animal, PlayerEntity player, MobState MobState, PlayerState playerState) {
-        double distance = animal.distanceTo(player);
+    default void updateFleeingState(LivingEntity animal, PlayerEntity player, MobState MobState) {
 
         // Enter fleeing state
-        if (!MobState.isFleeing && distance <= playerState.detectionRange && FOVcheck(animal, player) && !MobState.isFriendly) {
+        if (!MobState.isFleeing && ((MobState.isPlayerDetected && !MobState.isFriendly)|| MobState.isGroupStartled)) {
             MobState.isFleeing = true;
         }
 
         // Exit fleeing state
-        if (MobState.isFleeing && distance >= STOP_RANGE) {
+        if(MobState.isFleeing && !MobState.isPlayerDetected){
             MobState.isFleeing = false;
-            animal.setAttacker(player);//stop fleeing and then panic wander
+            animal.setAttacker(player);
+        }
+        if (MobState.isFleeing && MobState.isFriendly) {
+            MobState.isFleeing = false;
+        }
+    }
+
+    default void updatePlayerDetectedState(LivingEntity animal, PlayerEntity player,MobState MobState, PlayerState playerState) {
+        double distance = animal.distanceTo(player);
+
+        if (!MobState.isPlayerDetected && distance <= playerState.detectionRange && FOVcheck(animal, player) ) {
+            MobState.isPlayerDetected = true;
+        }
+
+        if (MobState.isPlayerDetected && distance >= STOP_RANGE) {
+            MobState.isPlayerDetected = false;
+        }
+    }
+
+    default void updateGroupStartledState(MobEntity animal, MobState MobState) {
+        if (MobState.isGroupStartled) {
+            MobState.isGroupStartled = false;
         }
     }
 
@@ -33,7 +53,7 @@ public interface AnimalStateMachine {
     default void updateFriendlyState(LivingEntity animal, PlayerEntity player, MobState state) {
 
         // Enter friendly state
-        if (!state.isFriendly && FOVcheck(animal, player) && player.isHolding(Items.WHEAT) && (animal.distanceTo(player) < 8)) {
+        if (!state.isFriendly  && FOVcheck(animal, player) && player.isHolding(Items.WHEAT) && (animal.distanceTo(player) < DEFAULT_DETECTION_RANGE + 0.2)) {
             state.isFriendly = true;//entry friendly state
         }
 

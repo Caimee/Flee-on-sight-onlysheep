@@ -6,6 +6,7 @@ import net.minecraft.item.Items;
 import net.minecraft.util.math.Vec3d;
 import org.sample.fleeonsight.AnimalSystem.Animalstate.MobState;
 
+import static org.sample.fleeonsight.LogicConfig.DEFAULT_DETECTION_RANGE;
 import static org.sample.fleeonsight.LogicConfig.FLEE_SPEED;
 
 // State machine for pig
@@ -13,7 +14,7 @@ public class PigStateMachine implements AnimalStateMachine {
 
     @Override
     public void updateFriendlyState(LivingEntity pig, PlayerEntity player, MobState state) {
-        if (!state.isFriendly && FOVcheck(pig, player) && (player.isHolding(Items.CARROT_ON_A_STICK) || player.isHolding(Items.POTATO) || player.isHolding(Items.BEETROOT)) && (pig.distanceTo(player) < 8)) {
+        if (!state.isFriendly && FOVcheck(pig, player) && (player.isHolding(Items.CARROT) || player.isHolding(Items.POTATO) || player.isHolding(Items.BEETROOT)) && (pig.distanceTo(player) < DEFAULT_DETECTION_RANGE + 0.2)) {
             state.isFriendly = true;//entry friendly state
         }
         if (state.isFriendly && pig.getAttacker() == player) {

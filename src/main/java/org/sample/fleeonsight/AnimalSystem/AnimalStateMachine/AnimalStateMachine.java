@@ -27,13 +27,17 @@ public interface AnimalStateMachine {
                 break;
 
             case FRIENDLY:
-                if(animal.getAttacker() == player){
+                if(animal.getAttacker() == player && !player.isHolding(Items.WHEAT)){
                     mobState.currentState = FLEEING;
                 }
                 break;
 
             case FLEEING:
-                if(distance >= STOP_RANGE){
+                if(player.isHolding(Items.WHEAT) && distance <= DEFAULT_DETECTION_RANGE + 0.2){
+                    mobState.currentState = FRIENDLY;
+                }
+
+                else if(distance >= STOP_RANGE){
                     mobState.currentState = DEFAULT_EMPTY;
                     animal.setAttacker(player);
                 }

@@ -59,7 +59,7 @@ public class ProcessAnimalAI {
             aiHandler.updateStates(animal, player, animalState, playerState);
 
             // Manage group fleeing behavior
-            AnimalGroupFleeManager.manageGroupFlee(animal, player);
+            AnimalGroupFleeManager.manageGroupFlee(animal);
 
             // Execute fleeing logic if applicable
             if (animalState.currentState == FLEEING) {

@@ -28,13 +28,16 @@ public class PigStateMachine implements AnimalStateMachine {
                 break;
 
             case FRIENDLY:
-                if(pig.getAttacker() == player){
+                if(pig.getAttacker() == player && !(player.isHolding(Items.CARROT) || player.isHolding(Items.POTATO) || player.isHolding(Items.BEETROOT) || player.isHolding(Items.CARROT_ON_A_STICK))){
                     mobState.currentState = FLEEING;
                 }
                 break;
 
             case FLEEING:
-                if(distance >= org.sample.fleeonsight.LogicConfig.STOP_RANGE){
+                if((player.isHolding(Items.CARROT) || player.isHolding(Items.POTATO) || player.isHolding(Items.BEETROOT) || player.isHolding(Items.CARROT_ON_A_STICK)) && distance <= DEFAULT_DETECTION_RANGE + 0.2){
+                    mobState.currentState = FRIENDLY;
+                }
+                else if(distance >= org.sample.fleeonsight.LogicConfig.STOP_RANGE){
                     mobState.currentState = DEFAULT_EMPTY;
                     pig.setAttacker(player);
                 }

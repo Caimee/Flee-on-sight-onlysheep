@@ -4,7 +4,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import org.sample.fleeonsight.LogicConfig;
 
 import java.util.function.Predicate;
@@ -21,7 +20,7 @@ public class AnimalGroupFleeManager {
     /**
      * Generic method to spread fleeing behavior among animals of the same type.
      */
-    public static <T extends AnimalEntity> void manageGroupFlee(T animal, PlayerEntity player) {
+    public static <T extends AnimalEntity> void manageGroupFlee(T animal) {
 
         EntityType<?> type = animal.getType();
         var state = getMobState(animal);
@@ -52,7 +51,6 @@ public class AnimalGroupFleeManager {
             var otherState = getMobState((MobEntity) other);
             if (!(otherState.currentState == FLEEING)) {
                 otherState.currentState = FLEEING;
-                ((MobEntity) other).setAttacker(player);
             }
         }
         state.timer = 0;
